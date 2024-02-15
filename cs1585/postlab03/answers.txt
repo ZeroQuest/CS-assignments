@@ -1,0 +1,28 @@
+Timothy Stokes
+
+Problem 1
+1) The asterisk matches any and all names by default.
+2) It outputs every file in the directory, even hidden hidden files, because
+	".*" matches every file extension.
+3) You should never run rm -rf .* or rm -rf / because it will remove all
+	files in the current directory (.*) or the root directory (/)
+	including your operating system.
+
+
+Problem 2
+1) By using ls -lt -c
+2) By using cat -n
+3) The whatis command shows a short one line sentence from the manual
+	 describing what the command you're querying is.
+
+
+Problem 3
+1) It contains the word apple.
+2) It contains the word banana. > writes to a file on the first line
+	and will overwrite information.
+3) It contains the word banana and the word carrot on a line beneath it.
+	>> writes to a file on the next empty line, unlike > which writes
+	to the first line only.
+4) The output is 1, 7, 14. | takes the output from a command or program
+	and "pipes" or sends it to the input of another program or command.
+

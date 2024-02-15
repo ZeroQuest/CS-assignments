@@ -1,0 +1,13 @@
+Problem 1
+1) grep -v -P \#+ story-plain.txt
+2) grep -v -P [\s+]?\#+ story-space.txt
+
+Problem 2
+1) sed -r 's/[aeiou]+//g' 
+
+Problem 3
+1) grep -P \.{4}-01-\. numbers.log
+
+Problem 4
+1) grep -o -P "\(?\d{3}\)?[-\s]?\d{3}[-\s]?\d{4}" phonebook.txt
+2) sed -r 's/\(?([0-9]{3})\)?[- ]?([0-9]{3})[- ]?([0-9]{4})/(\1) \2-\3/' phonebook.txt

@@ -1,0 +1,10 @@
+Q1) print_vector
+Q2) The problem is the while condition is always true, 
+	so it steps out of the vector into memory indefinitely 
+	until it segfaults.
+Q3) The variable i in the for loop does not increment, so it indefinitely loops.
+
+Q4) The comparison operator is set to run the loop while i is 
+	less than or equal to sum_this.size() which allows it 
+	to step out of the array into memory. 
+	Causing it to add a garbage value.
