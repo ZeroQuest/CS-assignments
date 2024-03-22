@@ -106,6 +106,7 @@ void monsterMove(GameState& state);
 
 //Checking for corpse and actman's death
 void checkBoard(GameState& state);
+void checkVictory(GameState& state);
 
 //steps 1 gameturn
 void runTurn(GameState& state, char action);
@@ -516,6 +517,15 @@ void monsterMove(GameState& state)
   }
 }
 
+void checkVictory(GameState& state)
+{
+  if(state.monsterList.empty())
+  {
+    //VICTORY!
+    state.victory = true;
+    return;
+  }
+}
 
 void checkBoard(GameState& state)
 {
@@ -539,6 +549,8 @@ void checkBoard(GameState& state)
       {
         compareMonsterIt->isAlive = false;
         monsterIt->isAlive = false;
+
+        state.grid[it->row_pos][it->col_pos] = Graphics::corpse;
       }
     }
 
@@ -640,6 +652,8 @@ void runTurn(GameState& state, char action)
         state.isActmanAlive = false;
         state.grid[state.row_act][state.col_act] = Graphics::dead_actman;
       }
+
+      checkVictory(state);
 
       state.hasActmanActed = false;
       state.stepNum++;
