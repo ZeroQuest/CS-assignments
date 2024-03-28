@@ -103,6 +103,7 @@ void monsterMove(GameState& state);
 
 //Checking for corpse and actman's death
 void checkBoard(GameState& state);
+void checkVictory(GameState& state);
 
 int main(int argc, char* argv[]) 
 {
@@ -182,6 +183,8 @@ int main(int argc, char* argv[])
     {
       break;
     }
+
+    checkVictory(state);
 
     std::cout << "\t Death Check 2!" << std::endl;
 
@@ -551,6 +554,15 @@ void monsterMove(GameState& state)
   }
 }
 
+void checkVictory(GameState& state)
+{
+  if(state.monsterList.empty())
+  {
+    //VICTORY!
+    state.victory = true;
+    return;
+  }
+}
 
 void checkBoard(GameState& state)
 {
@@ -569,11 +581,13 @@ void checkBoard(GameState& state)
   {
     for(auto compareMonsterIt = it + 1; compareMonsterIt != state.monsterList.end(); ++compareMonsterIt)
     {
-      if(compareMonsterIt->row_pos == monsterIt->row_pos && 
-        compareMonsterIt->col_pos == monsterIt->col_pos)
+      if(compareMonsterIt->row_pos == it->row_pos && 
+        compareMonsterIt->col_pos == it->col_pos)
       {
         compareMonsterIt->isAlive = false;
         monsterIt->isAlive = false;
+
+        state.grid[it->row_pos][it->col_pos] = Graphics::corpse;
       }
     }
 
