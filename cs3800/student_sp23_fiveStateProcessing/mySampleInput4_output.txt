@@ -1,0 +1,186 @@
+    1	[  admit]	r 
+    2	[  admit]	r r 
+    3	[  admit]	r r r n n n n 
+    4	[  admit]	r r r r n n n 
+    5	[  admit]	r r r r r n n 
+    6	[  admit]	r r r r r r n 
+    7	[  admit]	r r r r r r r 
+    8	[  begin]	p r r r r r r 
+    9	[contRun]	p r r r r r r 
+   10	[contRun]	p r r r r r r 
+   11	[contRun]	p r r r r r r 
+   12	[contRun]	p r r r r r r 
+   13	[  ioReq]	b r r r r r r 
+   14	[  begin]	b p r r r r r 
+   15	[contRun]	b p r r r r r 
+   16	[  ioReq]	b b r r r r r 
+   17	[  admit]	b b r r r r r r 
+   18	[ inrtpt]	b r r r r r r r 
+   19	[ inrtpt]	r r r r r r r r 
+   20	[  begin]	r r p r r r r r 
+   21	[contRun]	r r p r r r r r 
+   22	[contRun]	r r p r r r r r 
+   23	[ finish]	r r d r r r r r 
+   24	[  begin]	r r d p r r r r 
+   25	[contRun]	r r d p r r r r 
+   26	[contRun]	r r d p r r r r 
+   27	[contRun]	r r d p r r r r 
+   28	[contRun]	r r d p r r r r 
+   29	[contRun]	r r d p r r r r 
+   30	[contRun]	r r d p r r r r 
+   31	[contRun]	r r d p r r r r 
+   32	[  ioReq]	r r d b r r r r 
+   33	[  begin]	r r d b p r r r 
+   34	[contRun]	r r d b p r r r 
+   35	[ finish]	r r d b d r r r 
+   36	[  begin]	r r d b d p r r 
+   37	[contRun]	r r d b d p r r 
+   38	[ finish]	r r d b d d r r 
+   39	[  begin]	r r d b d d p r 
+   40	[contRun]	r r d b d d p r 
+   41	[contRun]	r r d b d d p r 
+   42	[contRun]	r r d b d d p r 
+   43	[  ioReq]	r r d b d d b r 
+   44	[ inrtpt]	r r d r d d b r 
+   45	[  begin]	r r p r d d b r 
+   46	[contRun]	r r p r d d b r 
+   47	[contRun]	r r p r d d b r 
+   48	[contRun]	r r p r d d b r 
+   49	[contRun]	r r p r d d b r 
+   50	[contRun]	r r p r d d b r 
+   51	[contRun]	r r p r d d b r 
+   52	[contRun]	r r p r d d b r 
+   53	[contRun]	r r p r d d b r 
+   54	[contRun]	r r p r d d b r 
+   55	[contRun]	r r p r d d b r 
+   56	[contRun]	r r p r d d b r 
+   57	[contRun]	r r p r d d b r 
+   58	[contRun]	r r p r d d b r 
+   59	[contRun]	r r p r d d b r 
+   60	[contRun]	r r p r d d b r 
+   61	[contRun]	r r p r d d b r 
+   62	[contRun]	r r p r d d b r 
+   63	[contRun]	r r p r d d b r 
+   64	[contRun]	r r p r d d b r 
+   65	[contRun]	r r p r d d b r 
+   66	[contRun]	r r p r d d b r 
+   67	[contRun]	r r p r d d b r 
+   68	[contRun]	r r p r d d b r 
+   69	[contRun]	r r p r d d b r 
+   70	[contRun]	r r p r d d b r 
+   71	[contRun]	r r p r d d b r 
+   72	[contRun]	r r p r d d b r 
+   73	[contRun]	r r p r d d b r 
+   74	[contRun]	r r p r d d b r 
+   75	[contRun]	r r p r d d b r 
+   76	[contRun]	r r p r d d b r 
+   77	[contRun]	r r p r d d b r 
+   78	[contRun]	r r p r d d b r 
+   79	[contRun]	r r p r d d b r 
+   80	[contRun]	r r p r d d b r 
+   81	[contRun]	r r p r d d b r 
+   82	[contRun]	r r p r d d b r 
+   83	[contRun]	r r p r d d b r 
+   84	[contRun]	r r p r d d b r 
+   85	[contRun]	r r p r d d b r 
+   86	[contRun]	r r p r d d b r 
+   87	[contRun]	r r p r d d b r 
+   88	[contRun]	r r p r d d b r 
+   89	[contRun]	r r p r d d b r 
+   90	[contRun]	r r p r d d b r 
+   91	[contRun]	r r p r d d b r 
+   92	[contRun]	r r p r d d b r 
+   93	[contRun]	r r p r d d b r 
+   94	[contRun]	r r p r d d b r 
+   95	[contRun]	r r p r d d b r 
+   96	[contRun]	r r p r d d b r 
+   97	[contRun]	r r p r d d b r 
+   98	[contRun]	r r p r d d b r 
+   99	[contRun]	r r p r d d b r 
+  100	[contRun]	r r p r d d b r 
+  101	[contRun]	r r p r d d b r 
+  102	[contRun]	r r p r d d b r 
+  103	[contRun]	r r p r d d b r 
+  104	[contRun]	r r p r d d b r 
+  105	[contRun]	r r p r d d b r 
+  106	[contRun]	r r p r d d b r 
+  107	[contRun]	r r p r d d b r 
+  108	[contRun]	r r p r d d b r 
+  109	[contRun]	r r p r d d b r 
+  110	[contRun]	r r p r d d b r 
+  111	[contRun]	r r p r d d b r 
+  112	[contRun]	r r p r d d b r 
+  113	[contRun]	r r p r d d b r 
+  114	[contRun]	r r p r d d b r 
+  115	[contRun]	r r p r d d b r 
+  116	[contRun]	r r p r d d b r 
+  117	[contRun]	r r p r d d b r 
+  118	[contRun]	r r p r d d b r 
+  119	[contRun]	r r p r d d b r 
+  120	[contRun]	r r p r d d b r 
+  121	[contRun]	r r p r d d b r 
+  122	[contRun]	r r p r d d b r 
+  123	[contRun]	r r p r d d b r 
+  124	[contRun]	r r p r d d b r 
+  125	[contRun]	r r p r d d b r 
+  126	[contRun]	r r p r d d b r 
+  127	[contRun]	r r p r d d b r 
+  128	[contRun]	r r p r d d b r 
+  129	[contRun]	r r p r d d b r 
+  130	[contRun]	r r p r d d b r 
+  131	[contRun]	r r p r d d b r 
+  132	[contRun]	r r p r d d b r 
+  133	[contRun]	r r p r d d b r 
+  134	[contRun]	r r p r d d b r 
+  135	[contRun]	r r p r d d b r 
+  136	[contRun]	r r p r d d b r 
+  137	[contRun]	r r p r d d b r 
+  138	[contRun]	r r p r d d b r 
+  139	[contRun]	r r p r d d b r 
+  140	[contRun]	r r p r d d b r 
+  141	[contRun]	r r p r d d b r 
+  142	[contRun]	r r p r d d b r 
+  143	[contRun]	r r p r d d b r 
+  144	[contRun]	r r p r d d b r 
+  145	[contRun]	r r p r d d b r 
+  146	[contRun]	r r p r d d b r 
+  147	[contRun]	r r p r d d b r 
+  148	[contRun]	r r p r d d b r 
+  149	[contRun]	r r p r d d b r 
+  150	[contRun]	r r p r d d b r 
+  151	[contRun]	r r p r d d b r 
+  152	[contRun]	r r p r d d b r 
+  153	[contRun]	r r p r d d b r 
+  154	[contRun]	r r p r d d b r 
+  155	[contRun]	r r p r d d b r 
+  156	[contRun]	r r p r d d b r 
+  157	[contRun]	r r p r d d b r 
+  158	[contRun]	r r p r d d b r 
+  159	[contRun]	r r p r d d b r 
+  160	[contRun]	r r p r d d b r 
+  161	[contRun]	r r p r d d b r 
+  162	[contRun]	r r p r d d b r 
+  163	[contRun]	r r p r d d b r 
+  164	[contRun]	r r p r d d b r 
+  165	[contRun]	r r p r d d b r 
+  166	[contRun]	r r p r d d b r 
+  167	[contRun]	r r p r d d b r 
+  168	[contRun]	r r p r d d b r 
+  169	[contRun]	r r p r d d b r 
+  170	[contRun]	r r p r d d b r 
+  171	[contRun]	r r p r d d b r 
+  172	[contRun]	r r p r d d b r 
+  173	[contRun]	r r p r d d b r 
+  174	[contRun]	r r p r d d b r 
+  175	[contRun]	r r p r d d b r 
+  176	[contRun]	r r p r d d b r 
+  177	[contRun]	r r p r d d b r 
+  178	[contRun]	r r p r d d b r 
+  179	[contRun]	r r p r d d b r 
+  180	[contRun]	r r p r d d b r 
+  181	[contRun]	r r p r d d b r 
+  182	[contRun]	r r p r d d b r 
+  183	[contRun]	r r p r d d b r 
+  184	[contRun]	r r p r d d b r 
+  185	[contRun]	r r p r d d b r 
+  186	[contRun]	r r p r d d b r 

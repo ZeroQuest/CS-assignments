@@ -1,0 +1,17 @@
+Timothy Stokes
+
+1)
+  a) ./compiley.sh program.cpp hello
+  b) It takes in the first and second command
+     line parameters and compiles the first parameter to an executable named after the second parameter. 
+2)
+  a) No.
+  b) The problem is that compiley.sh does not account for whitespace.
+
+3)
+  a) No.
+  b) The problem is that it's using the string $@ as a parameter.
+
+4)
+  a) Yes.
+  b) Double quotes around a variable tell bash to include whitespace.

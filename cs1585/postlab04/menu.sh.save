@@ -1,0 +1,54 @@
+#!/bin/bash
+
+input=""
+file=*
+
+menu()
+{
+
+
+}
+
+for file in *
+do
+
+# if [[ -f $file]]
+#then
+	echo "v) View" $file;
+	echo "e) Edit " $file;
+	echo "c) Compile" $file;
+	echo "x) Execute" $file;
+	echo "q) Quit";
+
+
+case $input in
+	v)
+		less $file;
+		;;
+
+	e)
+		nano $file;
+		;;
+
+	c)
+		g++ -Wall $file -o a.out;
+		;;
+
+	x)
+		if [[ !$file.out ]]
+		then
+			g++ -Wall $file -o a.out;
+		fi
+		./a.out
+		;;
+
+	q)
+		exit
+		;;
+	*)
+		echo "Invalid input. Moving to next file.";
+		echo "";
+		;;
+esac
+#fi
+done

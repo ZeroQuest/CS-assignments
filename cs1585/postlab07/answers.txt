@@ -1,0 +1,11 @@
+﻿Timothy Stokes
+
+Problem 1:
+	3) The problem is that the program is not freeing all allocated memory.
+	4) The problem occurs because the destructor deletes what the 
+		nxt pointer is pointing to and does not traverse the entire list.
+		So, the first link is deleted and the other links remain in memory.
+
+Problem 2:
+	4) Address Sanitizer states that there is a use-after-free error.
+	5) The problem is that the copy constructor creates a shallow copy of the array.
