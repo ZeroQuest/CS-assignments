@@ -558,7 +558,7 @@ std::string breadthFirstSearch(GameState& state)
       
       std::cout << "\t" << current << " " << std::endl; 
 
-      if(currentState.isActmanAlive == true && (currentState.victory == true || currentState.stepNum == 7))
+      if(nextState.isActmanAlive == true && (nextState.victory == true || nextState.stepNum == 7))
       {
         std::cout << "\t VICTORY!" << std::endl;
         std::cout << "\t Victory: " << currentState.victory <<" Step #: " << currentState.stepNum << std::endl;
