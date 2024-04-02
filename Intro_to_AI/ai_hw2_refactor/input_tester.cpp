@@ -192,11 +192,12 @@ void actmanShoot(GameState& state, ActionMap& actions, char direction)
           //removalList.push_back(*monsterIt);
           state.score += 5;
         }
-        else {
+        else 
+        {
           std::cout << "Monster Queue is likely too big... | " << monsterIt->sprite << std::endl; 
           newList.push_back(*monsterIt); 
         }
-      }//end while
+      }//end for
     }
     else 
     {
