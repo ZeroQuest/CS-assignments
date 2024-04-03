@@ -19,6 +19,11 @@ struct Monster
   bool isAlive = true;
 
   Monster(char character, int row, int col) : sprite(character), row_pos(row), col_pos(col) {};
+
+  bool operator==(const Monster& rhs) const
+  {
+    return row_pos == rhs.row_pos && col_pos == rhs.col_pos && sprite == rhs.sprite;
+  }
 };
 
 struct GameState
@@ -115,7 +120,7 @@ std::string writeToString(const GameState& state)
   {
     for(auto colIt = rowIt->begin(); colIt != rowIt->end(); ++colIt)
     {
-      std::cout << "\tCell #: " << count << std::endl; 
+      //std::cout << "\tCell #: " << count << std::endl; 
       map.push_back(*colIt);
       count++;
     }
@@ -170,73 +175,34 @@ void actmanShoot(GameState& state, ActionMap& actions, char direction)
   int currentCol = state.actman_col;
   bool missed = false;
 
-  std::vector<Monster> newList = {};
-  std::vector<Monster> removalList = {};
+  //std::vector<Monster> newList = {};
+  //std::vector<Monster> removalList = {};
 
   auto it = actions.find(direction);
 
   while(it != actions.end() && state.grid[currentRow][currentCol] != '#')
   {
-    
-    std::cout << state.grid[currentRow][currentCol] << std::endl;
-
-    std::cout << "IN WHILE" << std::endl;
-
-    if(state.grid[currentRow][currentCol] == 'G' || state.grid[currentRow][currentCol] == 'D')
+    if(state.grid[currentRow][currentCol] == 'D')
     {
-      missed = false;
-
-      for(auto monsterIt = state.monster_list.begin(); monsterIt != state.monster_list.end(); ++monsterIt)
+      Monster candidate = {'D', currentRow, currentCol};
+      auto find = std::find(state.monster_list.begin(), state.monster_list.end(), candidate);
+      if(find != state.monster_list.end())
       {
-        std::cout << "Current Monster at: " << monsterIt->row_pos << ", " << monsterIt->col_pos << std::endl << "Bullet at: " << currentRow << ", " << currentCol << std::endl;
-        
-        if(monsterIt->row_pos == currentRow && monsterIt->col_pos == currentCol)
-        {
-          std::cout << "Killed Monster at: " << monsterIt->row_pos << ", " << monsterIt->col_pos << std::endl;
-
-          monsterIt->isAlive = false;
-          //state.grid[currentRow][currentCol] = '@';
-          //removalList.push_back(*monsterIt);
-          //state.score += 5;
-        }
-        else 
-        {
-          std::cout << "Monster Queue is likely too big... | " << monsterIt->sprite << std::endl; 
-          //newList.push_back(*monsterIt); 
-        }
-      }//end for
+        find->isAlive = false;
+      }
     }
-    else 
+    else if(state.grid[currentRow][currentCol] == 'G')
     {
-      std::cout << "Missed!" << std::endl;
-      missed = true;
+      Monster candidate = {'G', currentRow, currentCol};
+      auto find = std::find(state.monster_list.begin(), state.monster_list.end(), candidate);
+      if(find != state.monster_list.end())
+      {
+        find->isAlive = false;
+      }
     }
     currentRow += it->second.first;
     currentCol += it->second.second;
-
-  }//end while
-
-  /*
-  for(auto it = state.monster_list.begin(); it != state.monster_list.end(); ++it)
-  {
-    if(!it->isAlive)
-    {
-      removalList.push_back(*it);
-    }
-      std::cout << "Monster: " << it->sprite << ", " << it->row_pos << ", " << it->col_pos << ", " << it->isAlive << std::endl;
-  }
-
-  for(auto it = removalList.begin(); it != removalList.end(); ++it)
-  {
-    state.monster_list.erase(it);
-  }
-*/
-  //Cleanup monster_list
-  /*if (!missed) 
-  {
-    state.monster_list = newList;
-  }*/
-
+  } 
   state.hasActmanShot = true;
   state.score = state.score - 20;
 }
@@ -402,9 +368,9 @@ void monsterMove(GameState& state)
     if(state.grid[newRow][newCol] == '@')
     {
       //std::cout << "\t\t Monster Moved Onto a Corpse and Died!" << std::endl;
-      state.grid[newRow][newCol] = '@';
+      //state.grid[newRow][newCol] = '@';
       monsterIt->isAlive = false;
-      state.score += 5;
+      //state.score += 5;
     }
     else 
     {
@@ -428,6 +394,7 @@ bool checkVictory(GameState& state)
     return state.victory = true;
   }
   else {
+    std::cout << "No victory!" << std::endl;
     return state.victory = false;
   }
 }
@@ -446,63 +413,45 @@ void checkBoard(GameState& state)
 {
   std::cout << "Before assign..." << std::endl;
 
-  std::vector<Monster> newList = state.monster_list;
+  std::vector<Monster> newList;
   auto nextIt = state.monster_list.begin();
 
   std::cout << "After assign... Before Victory" << std::endl;
 
-  for(auto it = state.monster_list.begin(); it != state.monster_list.end(); ++it)
-  {
-    if(it->isAlive == false)
-    {
-      state.grid[it->row_pos][it->col_pos] = '@';
-      state.monster_list.erase(it);
-      state.score += 5;
-      --it;
-    }
-    else {
-      std::cout << it->isAlive << std::endl;
-    }
-  }
-
-  for(auto it = state.monster_list.begin(); it != state.monster_list.end(); ++it)
-  {
-    std::cout << "Monster: " << it->sprite << ", " << it->row_pos << ", " << it->col_pos << ", " << it->isAlive << std::endl;
-  }
-
-
   if(checkVictory(state))
     return;
 
-  std::cout << "After victory" << std::endl;
-
+  std::cout << "Before overlapping" << std::endl;
   for(auto it = state.monster_list.begin(); it != state.monster_list.end(); ++it)
   {
-    std::vector<unsigned int> indicesToRemove;
-
-    for(unsigned int i = 0; i < state.monster_list.size(); ++i)
+    int count = 0;
+    for(auto monsterIt = std::next(it); monsterIt != state.monster_list.end(); ++monsterIt)
     {
-      if(i != std::distance(state.monster_list.begin(), it) && 
-         it->row_pos == state.monster_list[i].row_pos &&
-         it->col_pos == state.monster_list[i].col_pos)
+      std::cout << "Iteration: " << count << std::endl;
+      
+      if(it->row_pos == monsterIt->row_pos && it->col_pos == monsterIt->col_pos)
       {
-        indicesToRemove.push_back(i);
+        monsterIt->isAlive = false;
+        it->isAlive = false;
       }
-    }
 
-    for(auto index = indicesToRemove.rbegin(); index != indicesToRemove.rend(); ++index)
-    //for(auto index : indicesToRemove)
+      count++;
+    }
+  }
+
+  std::cout << "Before monster cull" << std::endl;
+  for(auto it = state.monster_list.begin(); it != state.monster_list.end(); ++it)
+  {
+    if(it->isAlive)
+    {
+      newList.push_back(*it);
+    }
+    else if(!it->isAlive)
     {
       state.grid[it->row_pos][it->col_pos] = '@';
       state.score += 5;
-      newList.erase(newList.begin() + *index);
     }
-    
 
-    std::cout << "Monster 1: " << it->sprite << ", " << it->row_pos << ", " << it->col_pos << std::endl;
-    
-    std::cout << "Monster 2: " << (it+1)->sprite << ", " << (it+1)->row_pos << ", " << (it+1)->col_pos << std::endl;
-    
     if(it->row_pos == state.actman_row && it->col_pos == state.actman_col)
     {
       state.grid[state.actman_row][state.actman_col] = 'X';

@@ -514,10 +514,12 @@ void checkBoard(GameState& state)
   state.monster_list = newList;
 }
 
+
 GameState transition(GameState state, char action)
 {
   GameState newState = state;
   newState.stepNum += 1;
+  std::string gameBoard;
   
 
   if((newState.isActmanAlive) && (newState.stepNum < 7) && !(newState.victory))
@@ -528,20 +530,25 @@ GameState transition(GameState state, char action)
       actmanInputMove(newState, action);
     }
     else {
-      std::cout << "invalid!" << std::endl;
+      newState.isActmanAlive = false;
+      return newState;
     }
 
     //actmanInputMove(state, action);
-    std::cout << "Before board check ========================" << std::endl;
 
     checkBoard(newState);
 
-    std::cout << "Before monster movement ===================" << std::endl;
-
-    if(newState.isActmanAlive && !newState.monster_list.empty())
+    if(newState.isActmanAlive)
       monsterMove(newState);
 
     checkBoard(newState);
+
+    gameBoard = writeToString(newState);
+
+    std::cout << newState.monster_list.size() << std::endl;
+
+    std::cout << newState.actionList << std::endl;
+    std::cout << gameBoard << std::endl;
 
     return newState;
   }
@@ -553,7 +560,86 @@ GameState transition(GameState state, char action)
   }
 }
 
- 
+std::string breadthFirstSearch(GameState& state)
+{
+  GameState currentState = state;
+  GameState nextState;
+  std::string result;
+  std::queue<std::string> frontier;
+  std::vector<char> inputList = {'1','2','3','4','5','6','7','8','9','N','S','E','W'};
+  std::unordered_map<std::string, GameState> visited;
+
+  bool valid = false; 
+
+  std::cout << "Start BFS" << std::endl;
+
+  //populate queue with initial actions
+  for(auto it = inputList.begin(); it != inputList.end(); ++it)
+  {
+    std::string initialAction = "";
+    initialAction.push_back(*it);
+    frontier.push(initialAction);
+    visited[""] = state;
+  }
+
+  while(!frontier.empty())
+  {
+    std::string current = frontier.front();
+    frontier.pop();
+
+    std::cout << "\tTrying " << current << std::endl;
+
+    std::string prefix = current;
+    prefix.pop_back();
+
+
+    auto it = visited.find(prefix);
+
+    std::cout << "\tAfter prefix" << std::endl;
+    //std::cout << "Trying to get key: " << it->first << std::endl;
+
+    if(it == visited.end())
+    {
+
+    }
+    else if(it->first == prefix)
+    {
+      std::cout << "\t\tFound previous state!" << std::endl;
+      std::cout << "\t\tPrefix: " << prefix << std::endl;
+      std::cout << "\t\tCurrent: " << current << std::endl;
+      currentState = it->second;
+    }
+
+    if(validMove(current.back(), currentState.actman_row, currentState.actman_col, currentState))
+    {
+      nextState = transition(currentState, current.back());
+      std::string next = nextState.actionList;
+      visited[next] = nextState;
+      
+      std::cout << "\t" << current << " " << std::endl; 
+
+      if(nextState.isActmanAlive == true && (nextState.victory == true || nextState.stepNum == 7))
+      {
+        std::cout << "\t VICTORY!" << std::endl;
+        std::cout << "\t Victory: " << currentState.victory <<" Step #: " << currentState.stepNum << std::endl;
+        std::cout << "\t Monster List Size: " << currentState.monster_list.size() << std::endl;
+        result = next;
+        break;
+      }
+
+      for(auto it = inputList.begin(); it != inputList.end(); ++it)
+      {
+        next = current + *it;
+        frontier.push(next);
+      }
+    }
+    else 
+    {
+      std::cout << "\t" << current << " is not valid." << std::endl;
+    }
+  }
+  return result;
+}
 //end Functions
 
 int main(int argc, char* argv [])
@@ -581,60 +667,16 @@ int main(int argc, char* argv [])
   std::cout << "Actman: " << state.actman_row << ", " << state.actman_col << std::endl;
 */
   std::cout << "Running" << std::endl;
-
-  while((state.isActmanAlive) && (count < 7) && !(state.victory))
+  std::string final = breadthFirstSearch(state);
+  
+  for(auto it = final.begin(); it != final.end(); ++it)
   {
-    std::cout << "Entered Loop" << std::endl;
-    while(acted == false)
-    {
-      std::cout << "Waiting for Input" << std::endl;
-      std::cin >> input;
-      if(validMove(input, state.actman_row, state.actman_col, state))
-      {
-        acted = true;
-      }
-      else {
-        input = ' ';
-      }
-    }
-
-    actmanInputMove(state, input);
-
-    std::cout << "Before board check ========================" << std::endl;
-    
-    checkBoard(state);
-
-    if(state.isActmanAlive && !state.monster_list.empty())
-      monsterMove(state);
-
-    std::cout << "Before board check 2 ========================" << std::endl;
-    checkBoard(state);
-
-    std::cout << "Before score check ========================" << std::endl;
-    checkScore(state);
-
-    bool win = checkVictory(state);
-    std::cout << "Victory? " << win << std::endl; 
-
-    gameBoard = writeToString(state);
-
-    std::cout << "After writing gameBoard ========================" << std::endl;
-    /*
-    std::cout << "Actman: " << state.actman_row << ", " << state.actman_col << std::endl;
-    for(auto it = state.monster_list.begin(); it != state.monster_list.end(); ++it)
-      std::cout << "\t Monster: " << it->sprite << ", " << it->row_pos << ", " << it->col_pos << std::endl;
-    */
-
-    std::cout << "Score: " << state.score << std::endl;
-    std::cout << state.actionList << std::endl;
-    std::cout << gameBoard;
-    
-    acted = false;
-    count++;
+    state = transition(state, *it);
   }
 
+  gameBoard = writeToString(state);
 
-  std::cout << state.actionList << std::endl;
+  std::cout << final << std::endl;
   std::cout << gameBoard;
   
   //Write to File
