@@ -1,4 +1,5 @@
-#include <cstdio>
+//Name: Timothy Stokes
+
 #include <iostream>
 #include <iterator>
 #include <limits>
@@ -10,6 +11,9 @@
 #include <fstream>
 #include <algorithm>
 #include <queue>
+#include <stack>
+
+//Data structures
 
 struct Monster
 {
@@ -72,7 +76,7 @@ struct CompareFirstElement
   }
 };
 
-//IO Functions
+//Read from file 
 void readFromFile(const std::string& filename, GameState& state)
 {
   std::string line;
@@ -94,6 +98,7 @@ void readFromFile(const std::string& filename, GameState& state)
     std::getline(file, line);
     for(int k = 0; k < col; k++)
     {
+      //Handles getting each 'actor' from the input
       if(line[k] == 'A')
       {
         state.actman_row = i;
@@ -111,6 +116,7 @@ void readFromFile(const std::string& filename, GameState& state)
   file.close();
 }
 
+//Write gameboard to string
 std::string writeToString(const GameState& state)
 {
   std::string map;
@@ -137,12 +143,13 @@ bool validMove(char action, const unsigned int& row, const unsigned int& col, co
   int newRow = row;
   int newCol = col;
 
-  auto it = actions.find(action);
+  auto actionIt = actions.find(action);
 
-  if(it != actions.end() && (action >= '1' && action <= '9'))
+  //Movement validation
+  if(actionIt != actions.end() && (action >= '1' && action <= '9'))
   {
-    newRow += it->second.first;
-    newCol += it->second.second;
+    newRow += actionIt->second.first;
+    newCol += actionIt->second.second;
 
     if(!(state.grid[newRow][newCol] == '#'))
     {
@@ -155,7 +162,7 @@ bool validMove(char action, const unsigned int& row, const unsigned int& col, co
       return false;
     }
   }
-  else if(it != actions.end() && (action == 'N' || action == 'S' | action == 'E' | action == 'W') && state.hasActmanShot == false)
+  else if(actionIt != actions.end() && (action == 'N' || action == 'S' | action == 'E' | action == 'W') && state.hasActmanShot == false)
   {
     //std::cout << "Valid Move!" << std::endl;
     return true;
@@ -165,18 +172,14 @@ bool validMove(char action, const unsigned int& row, const unsigned int& col, co
     //std::cout << "Invalid Move!" << std::endl;
     return false;
   }
-
-  //return false;
 }
 
+//Shooting the bullet
 void actmanShoot(GameState& state, ActionMap& actions, char direction)
 {
   int currentRow = state.actman_row;
   int currentCol = state.actman_col;
   bool missed = false;
-
-  //std::vector<Monster> newList = {};
-  //std::vector<Monster> removalList = {};
 
   auto it = actions.find(direction);
 
@@ -185,18 +188,24 @@ void actmanShoot(GameState& state, ActionMap& actions, char direction)
     if(state.grid[currentRow][currentCol] == 'D')
     {
       Monster candidate = {'D', currentRow, currentCol};
+
+      //Demon Lookup
       auto find = std::find(state.monster_list.begin(), state.monster_list.end(), candidate);
       if(find != state.monster_list.end())
       {
+        //flag monster as dead
         find->isAlive = false;
       }
     }
     else if(state.grid[currentRow][currentCol] == 'G')
     {
       Monster candidate = {'G', currentRow, currentCol};
+
+      //Ogre lookup
       auto find = std::find(state.monster_list.begin(), state.monster_list.end(), candidate);
       if(find != state.monster_list.end())
       {
+        //flag monster as dead
         find->isAlive = false;
       }
     }
@@ -207,7 +216,7 @@ void actmanShoot(GameState& state, ActionMap& actions, char direction)
   state.score = state.score - 20;
 }
 
-//Input Actions for testing!
+//Actman Movement 
 void actmanInputMove(GameState& state, char input)
 {
   ActionMap actions = createActionMap();
@@ -224,7 +233,8 @@ void actmanInputMove(GameState& state, char input)
       newRow += it->second.first;
       newCol += it->second.second;
     }
-
+    
+    //If actman steps on a death trigger
     if(state.grid[newRow][newCol] == 'G' || state.grid[newRow][newCol] == 'D' || state.grid[newRow][newCol] == '@')
     {
       state.isActmanAlive = false;
@@ -235,11 +245,13 @@ void actmanInputMove(GameState& state, char input)
       state.score = 0;
       state.actionList.push_back(it->first);
     }
+    //If actman shoots
     else if(input == 'N' || input == 'S' || input == 'E' || input == 'W')
     {
       actmanShoot(state, actions, input);
       state.actionList.push_back(it->first);
     }
+    //Normal movement
     else 
     {
       state.grid[newRow][newCol] = 'A';
@@ -250,10 +262,12 @@ void actmanInputMove(GameState& state, char input)
       state.actionList.push_back(it->first);
     }
   }
+  //Invalid input
   else 
     std::cout << "INVALID INPUT" << std::endl;
 }
 
+//Monster movement
 void monsterMove(GameState& state)
 {
   ActionMap actions = createActionMap();
@@ -264,7 +278,6 @@ void monsterMove(GameState& state)
 
   std::vector<std::tuple<int, int, int>> validMoveList;
   auto minIt = validMoveList.begin();
-  //auto monsterIt = state.monster_list.begin();
   auto actionIt = actions.begin();
 
   unsigned int newRow = 0;
@@ -281,6 +294,8 @@ void monsterMove(GameState& state)
     newCol = monsterIt->col_pos;
 
     //std::cout << "\t \t Running Monster Turn Order!" << std::endl;
+    
+    //Move Ogre
     if(monsterIt->sprite == 'G' && monsterIt->isAlive)
     {
       //std::cout << "\t \t Generating Valid Ogre Moves!" << std::endl;
@@ -318,6 +333,7 @@ void monsterMove(GameState& state)
         }
       }//end ogreOrder loop
     } //end ogre selection if
+    //Demon Movment
     else if(monsterIt->sprite == 'D' && monsterIt->isAlive)
     {
       //std::cout << "\t \t Generating Valid Demon Moves!" << std::endl;
@@ -332,8 +348,6 @@ void monsterMove(GameState& state)
 
           //std::cout << "\t\t\t Before new position!" << std::endl;
           //std::cout << "\t\t\t\t Start Row: " << newRow << " | Start Col: " << newCol << std::endl; 
-          
-          
           if(validMove(actionIt->first, newRow, newCol, state))
           {
             newRow += actionIt->second.first;
@@ -353,9 +367,10 @@ void monsterMove(GameState& state)
             validMoveList.push_back(moveCandidate);
           }
         }
-      }
+      }//end demonOrder loop
     }//end demon selection if
 
+    //Finding minimum distance among candidates
     minIt = std::min_element(validMoveList.begin(), validMoveList.end(), CompareFirstElement());
 
     newRow = std::get<1>(*minIt);
@@ -365,6 +380,7 @@ void monsterMove(GameState& state)
     monsterIt->row_pos = newRow;
     monsterIt->col_pos = newCol;
 
+    //Flag monster as dead if it steps on a corpse
     if(state.grid[newRow][newCol] == '@')
     {
       //std::cout << "\t\t Monster Moved Onto a Corpse and Died!" << std::endl;
@@ -376,29 +392,31 @@ void monsterMove(GameState& state)
     {
       //std::cout << "\t\t Monster Moved!" << std::endl;
       state.grid[newRow][newCol] = monsterIt->sprite;
-      //newList.push_back(*monsterIt);
     }
 
     validMoveList.clear();
   }//end monster_list iteration
-  //state.monster_list = newList; 
 }
 
+//Check for Victory condition
 bool checkVictory(GameState& state)
 {
-  //std::cout << "Are there monsters?" << state.monster_list.empty() << std::endl;
+  //std::cout << "Are the monsters dead? " << std::boolalpha << state.monster_list.empty() << std::endl;
+  //std::cout << "Monster List Size: " << state.monster_list.size() << std::endl;
 
   if(state.monster_list.empty())
   {
     //std::cout << "Victory!" << std::endl;
     return state.victory = true;
   }
-  else {
+  else 
+  {
     //std::cout << "No victory!" << std::endl;
     return state.victory = false;
   }
 }
 
+//Check score condition for actman's death
 void checkScore(GameState& state)
 {
   if(state.score <= 0)
@@ -408,50 +426,54 @@ void checkScore(GameState& state)
   }
 }
 
-//Checks for monster overlapping with monsters and actman
+//Checks for monster overlapping with monsters, and actman. Then culls all monsters flagged as dead.
 void checkBoard(GameState& state)
 {
-  //std::cout << "Before assign..." << std::endl;
-
   std::vector<Monster> newList;
   auto nextIt = state.monster_list.begin();
-
-  //std::cout << "After assign... Before Victory" << std::endl;
 
   if(checkVictory(state))
     return;
 
   //std::cout << "Before overlapping" << std::endl;
+
+  //Checks each monster's position against every other monster's position
   for(auto it = state.monster_list.begin(); it != state.monster_list.end(); ++it)
   {
-    int count = 0;
+    //int count = 0;
     for(auto monsterIt = std::next(it); monsterIt != state.monster_list.end(); ++monsterIt)
     {
       //std::cout << "Iteration: " << count << std::endl;
       
+      //If two monster's overlap, flag them as dead.
       if(it->row_pos == monsterIt->row_pos && it->col_pos == monsterIt->col_pos)
       {
         monsterIt->isAlive = false;
         it->isAlive = false;
       }
-
-      count++;
     }
   }
 
   //std::cout << "Before monster cull" << std::endl;
+
+  //Culls dead monsters
   for(auto it = state.monster_list.begin(); it != state.monster_list.end(); ++it)
   {
+    //Put monster in the new monster list if it is alive
     if(it->isAlive)
     {
       newList.push_back(*it);
+      //std::cout << "\t\tMonster: " << it->sprite << ", " << it->row_pos << ", " << it->col_pos << std::boolalpha << it->isAlive << std::endl;
     }
+    //Otherwise process monster death
     else if(!it->isAlive)
     {
       state.grid[it->row_pos][it->col_pos] = '@';
       state.score += 5;
+      //std::cout << "\t\tMonster: " << it->sprite << ", " << it->row_pos << ", " << it->col_pos << std::boolalpha << it->isAlive << std::endl;
     }
 
+    //Check if a monster stands on actman
     if(it->row_pos == state.actman_row && it->col_pos == state.actman_col)
     {
       state.grid[state.actman_row][state.actman_col] = 'X';
@@ -463,34 +485,43 @@ void checkBoard(GameState& state)
   state.monster_list = newList;
 }
 
-GameState transition(GameState state, char action)
+//Transition function
+GameState transition(GameState& state, char action)
 {
   GameState newState = state;
   newState.stepNum += 1;
+  std::string gameBoard;
   
 
-  if((newState.isActmanAlive) && (newState.stepNum < 7) && !(newState.victory))
+  if((newState.isActmanAlive) && (newState.stepNum <= 10) && !(newState.victory))
   {
     //std::cout << "Waiting for Input" << std::endl;
     if(validMove(action, newState.actman_row, newState.actman_col, newState))
     {
       actmanInputMove(newState, action);
     }
-    else {
-      std::cout << "invalid!" << std::endl;
+    else 
+    {
+      newState.isActmanAlive = false;
+      return newState;
     }
-
-    //actmanInputMove(state, action);
-    //std::cout << "Before board check ========================" << std::endl;
 
     checkBoard(newState);
 
-    //std::cout << "Before monster movement ===================" << std::endl;
-
-    if(newState.isActmanAlive && !newState.monster_list.empty())
+    if(newState.isActmanAlive)
       monsterMove(newState);
 
     checkBoard(newState);
+
+    checkVictory(newState);
+
+    gameBoard = writeToString(newState);
+
+    std::cout << "Monster List Size: " << newState.monster_list.size() << std::endl;
+    std::cout << "Score: " << newState.score << std::endl;
+
+    std::cout << newState.actionList << std::endl;
+    std::cout << gameBoard << std::endl;
 
     return newState;
   }
@@ -502,7 +533,156 @@ GameState transition(GameState state, char action)
   }
 }
 
- 
+//Iterative Deepening DFS
+std::tuple<std::string, bool> boundedDepthFirstSearch(GameState& state, unsigned int depthLimit)
+{
+  GameState currentState = state;
+  GameState nextState;
+  std::string result;
+  std::stack<std::string> frontier;
+  bool limitHit = false;
+
+  std::vector<char> fullList = {'N','S','E','W','9','8','7','6','4','3','2','1'};
+  //std::vector<char> moveList = {'9','8','7','6','4','3','2','1'};
+  std::vector<char> inputList = fullList;
+  std::unordered_map<std::string, GameState> visited;
+
+  //std::cout << "\tStart boundedDepthFirstSearch" << std::endl;
+
+  for(auto it = inputList.begin(); it != inputList.end(); ++it)
+  {
+    std::string initialAction = "";
+    initialAction.push_back(*it);
+    frontier.push(initialAction);
+    visited[""] = state;
+  }
+
+  while(!frontier.empty())
+  {
+    std::string current = frontier.top();
+    frontier.pop();
+
+    //std::cout << "\tTrying " << current << std::endl;
+    
+    std::string prefix = current;
+    prefix.pop_back();
+
+    std::string next;
+
+    auto it = visited.find(prefix);
+    
+    //std::cout << "\tAfter prefix" << std::endl;
+    //std::cout << "\tTrying to get key: " << it->first << std::endl;
+
+    if(it == visited.end())
+    {
+
+      //std::cout << "Not in visited states | " << current << std::endl;
+    }
+    //If we find a previous sequence that leads to the current sequence,
+    //assign the paired state to the current state.
+    else if(it->first == prefix)
+    {
+      //std::cout << "\t\tFound previous state!" << std::endl;
+      //std::cout << "\t\tPrefix: " << prefix << std::endl;
+      //std::cout << "\t\tCurrent: " << current << std::endl;
+      currentState = it->second;
+    }
+
+    int shootSymCount = 0;
+
+    for(auto it = current.begin(); it != current.end(); ++it)
+    {
+      if(*it == 'N' || *it == 'S' || *it == 'E' || *it == 'W')
+        shootSymCount = shootSymCount + 1;
+    }
+
+    //std::cout << "Number of shooting characters: " << shootSymCount << std::endl;
+
+    if(validMove(current.back(), currentState.actman_row, currentState.actman_col, currentState) && !(shootSymCount > 1))
+    {
+
+      std::cout << "\t\tMove " << current << " is valid!" << std::endl << std::endl;;
+      
+      if(current.length() == depthLimit)
+      {
+        nextState = transition(currentState, current.back());
+
+        //std::cout << "\t\tAfter transition!" << std::endl;
+        std::cout << "\t\t\tStep Number: " << nextState.stepNum << std::endl;
+        std::cout << "============================================================" << std::endl;
+
+        next = nextState.actionList;
+
+        //std::cout << "\t\tActions after transition: " << next << std::endl;
+
+        if(nextState.isActmanAlive)
+          visited[next] = nextState;
+
+        if(nextState.isActmanAlive == true && (nextState.victory == true || nextState.stepNum >= 10))
+        {
+          std::cout << "\t\tVICTORY!" << std::endl;
+          result = next;
+          limitHit = true;
+          break;
+        }
+        //limitHit = true;
+      }
+      else 
+      {
+        //std::cout << "\t\tAdd extensions to stack!" << std::endl;
+        /*
+        if (nextState.hasActmanShot) 
+        {
+          //std::cout << "\t\t\tUsing short" << std::endl;
+          inputList = moveList;
+        }
+        else 
+        {
+          //std::cout << "\t\t\tUsing long" << std::endl;
+          inputList = fullList;
+        }
+        */
+        for(auto it = inputList.begin(); it != inputList.end(); ++it)
+        {
+          next = current + *it;
+          frontier.push(next);
+        }
+      }
+    }
+    else 
+    {
+      //std::cout << "\tNot valid" << std::endl;
+    }
+  }
+
+  std::tuple<std::string, bool> sequenceLimit;
+  return sequenceLimit = std::make_pair(result, limitHit);
+}
+
+std::tuple<std::string, bool> iterativeDeepeningDepthFirstSearch(GameState& state, unsigned int depthLimit)
+{
+  unsigned int depth = 1;
+  bool untilFalse;
+  std::string actionString;
+  std::tuple<std::string, bool> result;
+
+  //std::cout << "Start ID-BFS!" << std::endl;
+
+  do 
+  {
+    //std::cout << "Depth: " << depth << std::endl;
+
+    result = boundedDepthFirstSearch(state, depth);
+    if(std::get<1>(result) != false)
+    {
+      std::cout << "Found a solution!" << std::endl;
+      return result;
+    }
+
+    depth += 1;
+  }while (/*std::get<1>(result) == false &&*/ depth <= depthLimit);
+}
 //end Functions
 
 int main(int argc, char* argv [])
@@ -529,61 +709,31 @@ int main(int argc, char* argv [])
 
   std::cout << "Actman: " << state.actman_row << ", " << state.actman_col << std::endl;
 */
-  std::cout << "Running" << std::endl;
+  //std::cout << "Running" << std::endl;
+  //std::string final = breadthFirstSearch(state);
 
-  while((state.isActmanAlive) && (count < 10) && !(state.victory))
+  std::tuple<std::string, bool> result = iterativeDeepeningDepthFirstSearch(state, 10);
+
+  std::string final;
+
+  /*if(std::get<1>(result) == false)
   {
-    std::cout << "Entered Loop" << std::endl;
-    while(acted == false)
-    {
-      std::cout << "Waiting for Input" << std::endl;
-      std::cin >> input;
-      if(validMove(input, state.actman_row, state.actman_col, state))
-      {
-        acted = true;
-      }
-      else {
-        input = ' ';
-      }
-    }
+    //std::cout << "No solution." << std::endl;
+  }
+  else 
+  {*/
+    final = std::get<0>(result);
+  //}
 
-    actmanInputMove(state, input);
-
-    //std::cout << "Before board check ========================" << std::endl;
-    
-    checkBoard(state);
-
-    if(state.isActmanAlive && !state.monster_list.empty())
-      monsterMove(state);
-
-    //std::cout << "Before board check 2 ========================" << std::endl;
-    checkBoard(state);
-
-    //std::cout << "Before score check ========================" << std::endl;
-    checkScore(state);
-
-    bool win = checkVictory(state);
-    std::cout << "Victory? " << win << std::endl; 
-
-    gameBoard = writeToString(state);
-
-    //std::cout << "After writing gameBoard ========================" << std::endl;
-    /*
-    std::cout << "Actman: " << state.actman_row << ", " << state.actman_col << std::endl;
-    for(auto it = state.monster_list.begin(); it != state.monster_list.end(); ++it)
-      std::cout << "\t Monster: " << it->sprite << ", " << it->row_pos << ", " << it->col_pos << std::endl;
-    */
-
-    std::cout << "Score: " << state.score << std::endl;
-    std::cout << state.actionList << std::endl;
-    std::cout << gameBoard;
-    
-    acted = false;
-    count++;
+  for(auto it = final.begin(); it != final.end(); ++it)
+  {
+    state = transition(state, *it);
   }
 
+  gameBoard = writeToString(state);
 
-  std::cout << state.actionList << std::endl;
+  //Terminal Output
+  std::cout << final << std::endl;
   std::cout << gameBoard;
   
   //Write to File
@@ -600,3 +750,4 @@ int main(int argc, char* argv [])
   
   return 0;
 }
+
