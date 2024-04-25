@@ -543,140 +543,6 @@ GameState transition(GameState& state, char action)
   }
 }
 
-//Iterative Deepening DFS
-std::tuple<std::string, bool, std::unordered_map<std::string, GameState>> boundedDepthFirstSearch(GameState& state, unsigned int depthLimit, std::unordered_map<std::string, GameState>& visited)
-{
-  GameState currentState = state;
-  std::string result;
-  //std::string gameBoard;
-  bool limitHit = false;
-  bool badState = false;
-  std::stack<std::string> frontier;
-  std::vector<char> inputList = {'N','S','E','W','9','8','7','6','4','3','2','1'};
- 
-  //Intialize Depth 1 nodes
-  for(auto it = inputList.begin(); it != inputList.end(); ++it)
-  {
-    frontier.push(std::string(1, *it));
-  }
-
-  //Start DFS
-  while(!frontier.empty())
-  {
-    //Get element from top of the frontier
-    std::string current = frontier.top();
-    frontier.pop();
-
-    //Reset currentState to intialState each iteration
-    currentState = state;
-    
-    //Find out what the previous state should be
-    std::string prefix = current;
-    prefix.pop_back();
-
-    std::string next;
-    badState = false;
-
-    //Search the hash table for the previous state
-    auto it = visited.find(prefix);
-    
-    //If we find the previous state,
-    //assign the paired state to the current state.
-    if(it != visited.end())
-    {
-      currentState = it->second;
-    }
-      
-    //If the current action sequence is equal to the depth limit
-    if(current.length() == depthLimit)
-    {
-      //We then transition to the next state if it is a valid move
-      if(validMove(current.back(), currentState.actman_row, currentState.actman_col, currentState))
-      {
-        transition(currentState, current.back());
-      }
-      //If the transition is not a valid move we 'discard' it 
-      else
-      {
-        badState = true;
-      }
-
-      //Some helpful debug info
-      //gameBoard = writeToString(currentState);
-
-      //std::cout << "\t\tAfter transition!" << std::endl;
-      //std::cout << "Action List: " << currentState.actionList << std::endl;
-      //std::cout << "Step Number: " << currentState.stepNum << std::endl;
-      //std::cout << "Is alive: " << currentState.isActmanAlive << std::boolalpha << std::endl;
-      //std::cout << gameBoard << std::endl;
-      //std::cout << "============================================================" << std::endl;
-
-      next = currentState.actionList;
-      
-      //If the state is valid, we add it to the hash table.
-      if(currentState.isActmanAlive && !badState)
-      {
-        visited[next] = currentState;
-      }
-
-      //Check for victory
-      if(currentState.isActmanAlive == true && (currentState.victory == true || currentState.stepNum >= 10))
-      {
-        std::cout << "\t\tVICTORY!" << std::endl;
-        result = currentState.actionList;
-        limitHit = true;
-        break;
-      }
-    }
-    //If we're not at the depth limit, add extensions
-    else 
-    {
-      std::string next;
-
-      //Check if the current state is in the hash table
-      auto it = visited.find(current);
-      
-      //If so, add extensions
-      if(it != visited.end())
-      {
-        for(auto it = inputList.begin(); it != inputList.end(); ++it)
-        {
-          next = current + *it;
-          frontier.push(next);
-        }
-      }
-    }
-  }
-
-  return {result, limitHit, visited};
-}
-
-std::tuple<std::string, bool> iterativeDeepeningDepthFirstSearch(GameState& state, unsigned int depthLimit)
-{
-  unsigned int depth = 1;
-  std::tuple<std::string, bool, std::unordered_map<std::string, GameState>> result;
-  std::unordered_map<std::string, GameState> visited;
-
-  //Put the root node in the state hash table
-  visited[""] = state;
-
-  //Start Iterative Deepening
-  do 
-  {
-    //Call DFS
-    result = boundedDepthFirstSearch(state, depth, visited);
-
-    //If DFS finds goal, we find a solution
-    if(std::get<1>(result))
-    {
-      std::cout << "Found a solution!" << std::endl;
-      return {std::get<0>(result), std::get<1>(result)};
-    }
-
-    depth += 1;
-  }while ( depth <= depthLimit); //end while
-}
-
 bool goal(const GameState& state)
 {
   return (state.isActmanAlive && state.monster_list.empty());
@@ -696,15 +562,15 @@ unsigned int cost(const GameState& state, const unsigned int startMonster, char&
     actionCost = 1;
   
   return actionCost + numMonsterValue;
-
 }
 
 unsigned int heuristic(const GameState& state, std::string& actionString)
 {
   //unsigned int scoreDiff = 50 - state.score;
-  unsigned int currentMonsterValue = 5 * state.monster_list.size();
-  unsigned int actionValue = 10 * state.hasActmanShot + 5 * state.actionList.size();
+  unsigned int currentMonsterValue = state.monster_list.size();
+  unsigned int actionValue = 5 * state.hasActmanShot + 2 * state.actionList.size();
 
+  //return 
   return currentMonsterValue + actionValue;
 }
 
